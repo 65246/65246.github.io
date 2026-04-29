@@ -1,8 +1,540 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="pl">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agencja Medialna</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f0e8;
+    --gold: #c9a84c;
+    --gold-light: #e8d49a;
+    --dark: #111111;
+    --mid: #1e1e1e;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* GRAIN OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 4rem;
+    background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    color: var(--gold);
+  }
+  .nav-links { display: flex; gap: 2.5rem; }
+  .nav-links a {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    transition: opacity 0.3s, color 0.3s;
+  }
+  .nav-links a:hover { opacity: 1; color: var(--gold); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 4rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -200px; right: -200px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.2s;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.5rem, 9vw, 8rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    max-width: 900px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 0.4s;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .hero-sub {
+    margin-top: 2rem;
+    font-size: 1.1rem;
+    font-weight: 300;
+    max-width: 500px;
+    line-height: 1.8;
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 0.6s;
+    color: rgba(245,240,232,0.65);
+  }
+  .hero-cta {
+    margin-top: 3rem;
+    display: inline-block;
+    padding: 1rem 2.5rem;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.3s, color 0.3s;
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 0.8s;
+    width: fit-content;
+  }
+  .hero-cta:hover { background: var(--gold); color: var(--black); }
+
+  .hero-number {
+    position: absolute;
+    right: 4rem;
+    bottom: 4rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 18rem;
+    font-weight: 900;
+    color: rgba(201,168,76,0.04);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* HISTORIA */
+  .story {
+    padding: 8rem 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 6rem;
+    align-items: center;
+  }
+  .story-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+  }
+  .story-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+  .story-title em { font-style: italic; color: var(--gold); }
+  .story-divider {
+    width: 60px;
+    height: 1px;
+    background: var(--gold);
+    margin: 2.5rem 0;
+  }
+  .story-text {
+    font-size: 1rem;
+    line-height: 1.9;
+    color: rgba(245,240,232,0.7);
+  }
+  .story-text p + p { margin-top: 1.5rem; }
+  .story-badge {
+    display: inline-block;
+    background: var(--mid);
+    border: 1px solid rgba(201,168,76,0.3);
+    padding: 0.6rem 1.2rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    margin-top: 2rem;
+    color: var(--gold-light);
+  }
+
+  /* USŁUGI */
+  .services {
+    background: var(--dark);
+    padding: 8rem 4rem;
+  }
+  .services-inner { max-width: 1200px; margin: 0 auto; }
+  .section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 5rem;
+  }
+  .section-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border: 1px solid rgba(201,168,76,0.15);
+  }
+  .service-card {
+    padding: 2.5rem 2rem;
+    border-right: 1px solid rgba(201,168,76,0.15);
+    position: relative;
+    transition: background 0.4s;
+    cursor: default;
+  }
+  .service-card:last-child { border-right: none; }
+  .service-card:hover { background: rgba(201,168,76,0.05); }
+  .service-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 900;
+    color: rgba(201,168,76,0.15);
+    line-height: 1;
+    margin-bottom: 1.5rem;
+    transition: color 0.4s;
+  }
+  .service-card:hover .service-num { color: rgba(201,168,76,0.35); }
+  .service-name {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+  }
+  .service-desc {
+    font-size: 0.8rem;
+    color: rgba(245,240,232,0.45);
+    line-height: 1.7;
+  }
+  .service-line {
+    position: absolute;
+    bottom: 0; left: 2rem;
+    width: 0;
+    height: 2px;
+    background: var(--gold);
+    transition: width 0.5s ease;
+  }
+  .service-card:hover .service-line { width: calc(100% - 4rem); }
+
+  /* INFO SECTION */
+  .info {
+    padding: 8rem 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3rem;
+    margin-top: 4rem;
+  }
+  .info-item {
+    padding: 2.5rem;
+    border: 1px solid rgba(201,168,76,0.12);
+    position: relative;
+    transition: border-color 0.3s;
+  }
+  .info-item:hover { border-color: rgba(201,168,76,0.4); }
+  .info-item::before {
+    content: attr(data-num);
+    position: absolute;
+    top: -1px; right: 2rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    background: var(--gold);
+    color: var(--black);
+    padding: 0.3rem 0.7rem;
+    font-weight: 700;
+  }
+  .info-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.8rem;
+  }
+  .info-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .info-sub {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: rgba(245,240,232,0.5);
+    line-height: 1.6;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--dark);
+    padding: 4rem;
+    text-align: center;
+    border-top: 1px solid rgba(201,168,76,0.1);
+  }
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+  .footer-text {
+    font-size: 0.8rem;
+    color: rgba(245,240,232,0.35);
+    letter-spacing: 0.1em;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* GOLD LINE SEPARATOR */
+  .sep {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+    opacity: 0.3;
+    margin: 0;
+  }
+
+  @media (max-width: 900px) {
+    nav { padding: 1.5rem 2rem; }
+    .nav-links { display: none; }
+    .hero { padding: 7rem 2rem 4rem; }
+    .story { grid-template-columns: 1fr; padding: 5rem 2rem; gap: 3rem; }
+    .services { padding: 5rem 2rem; }
+    .services-grid { grid-template-columns: repeat(2, 1fr); }
+    .service-card { border-bottom: 1px solid rgba(201,168,76,0.15); }
+    .info { padding: 5rem 2rem; }
+    .info-grid { grid-template-columns: 1fr; }
+    footer { padding: 3rem 2rem; }
+    .section-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .hero-number { display: none; }
+  }
+</style>
 </head>
 <body>
-<h1>skwarek rucha psa jak sra</h1>
+
+<nav>
+  <div class="nav-logo">AM Studio</div>
+  <div class="nav-links">
+    <a href="#historia">Historia</a>
+    <a href="#uslugi">Usługi</a>
+    <a href="#informacje">O Firmie</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">Agencja Medialna &amp; Marketing</div>
+  <h1>Tworzę marki,<br>które <em>zostają</em><br>w pamięci.</h1>
+  <p class="hero-sub">Od marketingu po strony internetowe — wszystkim zajmuję się sam, z pasją i pełnym zaangażowaniem.</p>
+  <a href="#historia" class="hero-cta">Poznaj moją historię</a>
+  <div class="hero-number">AM</div>
+</section>
+
+<div class="sep"></div>
+
+<!-- HISTORIA -->
+<section class="story" id="historia">
+  <div class="reveal">
+    <div class="story-label">Moja historia</div>
+    <h2 class="story-title">Zacząłem,<br>gdy inni<br><em>dopiero marzyli.</em></h2>
+    <div class="story-divider"></div>
+    <div class="story-badge">🎯 Założyciel &amp; CEO od nastolatka</div>
+  </div>
+  <div class="reveal" style="transition-delay: 0.2s">
+    <p class="story-text">
+      Byłem jeszcze nastolatkiem, gdy zdecydowałem się na krok, który dla wielu brzmiał jak szaleństwo — założyłem własną agencję medialną. Nie czekałem na odpowiedni moment, idealny wiek ani cudzą zgodę. Po prostu zacząłem działać.
+    </p>
+    <p class="story-text">
+      Od samego początku wszystko wziąłem w swoje ręce. Sam buduję strategie marketingowe, tworzę contentt, projektuję identyfikacje wizualne, programuję strony internetowe i zarządzam kampaniami reklamowymi. Żaden etap pracy nie jest mi obcy — od briefu po finalny efekt.
+    </p>
+    <p class="story-text">
+      To co zaczęło się jako marzenie nastolatka, dziś jest prawdziwą firmą medialną. Każdy projekt traktuję jak własny — bo wiem, co znaczy budować coś od zera z niczym oprócz determinacji i pomysłu.
+    </p>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- USŁUGI -->
+<section class="services" id="uslugi">
+  <div class="services-inner">
+    <div class="section-header reveal">
+      <div>
+        <div class="section-label">Co robię</div>
+        <h2 class="section-title">Pełna obsługa.<br>Jeden człowiek.</h2>
+      </div>
+    </div>
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="service-num">01</div>
+        <div class="service-name">Marketing &amp; Strategia</div>
+        <div class="service-desc">Tworzę kompleksowe strategie marketingowe dopasowane do Twojej marki i grupy docelowej.</div>
+        <div class="service-line"></div>
+      </div>
+      <div class="service-card reveal" style="transition-delay:0.1s">
+        <div class="service-num">02</div>
+        <div class="service-name">Strony Internetowe</div>
+        <div class="service-desc">Projektuję i programuję nowoczesne strony — od wizji po gotowy, działający produkt.</div>
+        <div class="service-line"></div>
+      </div>
+      <div class="service-card reveal" style="transition-delay:0.2s">
+        <div class="service-num">03</div>
+        <div class="service-name">Social Media</div>
+        <div class="service-desc">Zarządzam profilami, tworzę contentt i buduję zaangażowane społeczności wokół marek.</div>
+        <div class="service-line"></div>
+      </div>
+      <div class="service-card reveal" style="transition-delay:0.3s">
+        <div class="service-num">04</div>
+        <div class="service-name">Identyfikacja Wizualna</div>
+        <div class="service-desc">Logo, kolory, typografia — projektuję spójny wizerunek marki, który zapada w pamięć.</div>
+        <div class="service-line"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- INFORMACJE O FIRMIE -->
+<section class="info" id="informacje">
+  <div class="section-label reveal">Podstawowe elementy firmy</div>
+  <h2 class="section-title reveal">Informacje<br>o firmie</h2>
+
+  <div class="info-grid">
+    <div class="info-item reveal" data-num="01">
+      <div class="info-label">Nazwa firmy</div>
+      <div class="info-value">AM Studio</div>
+      <div class="info-sub">Agencja medialna specjalizująca się w marketingu i kreacji cyfrowej.</div>
+    </div>
+
+    <div class="info-item reveal" data-num="02" style="transition-delay:0.1s">
+      <div class="info-label">Logo</div>
+      <div class="info-value">Identyfikacja wizualna</div>
+      <div class="info-sub">Spójne, nowoczesne logo odzwierciedlające charakter marki i jej wartości.</div>
+    </div>
+
+    <div class="info-item reveal" data-num="03" style="transition-delay:0.15s">
+      <div class="info-label">Właściciel / Właściciele</div>
+      <div class="info-value">Jednoosobowa działalność</div>
+      <div class="info-sub">Firma założona i prowadzona samodzielnie — od marketingu po technologię.</div>
+    </div>
+
+    <div class="info-item reveal" data-num="04" style="transition-delay:0.2s">
+      <div class="info-label">Adres siedziby firmy</div>
+      <div class="info-value">Polska</div>
+      <div class="info-sub">Działamy lokalnie i zdalnie — obsługujemy klientów w całym kraju.</div>
+    </div>
+
+    <div class="info-item reveal" data-num="05" style="transition-delay:0.25s">
+      <div class="info-label">Forma organizacyjno-prawna</div>
+      <div class="info-value">Jednoosobowa działalność gospodarcza</div>
+      <div class="info-sub">Elastyczna struktura pozwalająca na szybkie reagowanie na potrzeby klientów.</div>
+    </div>
+
+    <div class="info-item reveal" data-num="06" style="transition-delay:0.3s">
+      <div class="info-label">Nr PKD</div>
+      <div class="info-value">73.11.Z / 62.09.Z</div>
+      <div class="info-sub">Działalność agencji reklamowych oraz pozostała działalność usługowa w zakresie IT.</div>
+    </div>
+
+    <div class="info-item reveal" data-num="07" style="transition-delay:0.35s">
+      <div class="info-label">Profil i zakres działalności</div>
+      <div class="info-value">Agencja medialna 360°</div>
+      <div class="info-sub">Marketing, branding, tworzenie stron internetowych, social media, kampanie reklamowe — wszystko w jednym miejscu.</div>
+    </div>
+
+    <div class="info-item reveal" data-num="08" style="transition-delay:0.4s">
+      <div class="info-label">Obszar działalności</div>
+      <div class="info-value">Cała Polska + online</div>
+      <div class="info-sub">Obsługujemy klientów stacjonarnie oraz zdalnie — bez ograniczeń geograficznych.</div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">AM Studio</div>
+  <p class="footer-text">Agencja medialna założona przez nastolatka z pasji do tworzenia. &nbsp;·&nbsp; Wszystko tworzymy sami.</p>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => observer.observe(r));
+</script>
 </body>
 </html>
